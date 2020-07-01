@@ -5,10 +5,10 @@ const schemaValidation = (password, email, firstname, lastname, phone) => {
   var phoneNo = /^[789]\d{9}$/
   //check the phone no is correct format or not start [7.8.9] and 10 degit and not contain [00000]
 
-  if (!(/^[789]\d{9}$/).test(phone) || (/0{5,}/).test(phone)) {
-    console.log("phone no is not correct format")
-    throw new Error("Phone no is Not Valid")
-  }
+  // if (!(/^[789]\d{9}$/).test(phone) || (/0{5,}/).test(phone)) {
+  //   console.log("phone no is not correct format")
+  //   throw new Error("Phone no is Not Valid")
+  // }
 
   //find the first letter using slice in first name.....
   const firstLetterOfFirstNmae = firstname.slice(0, 1)

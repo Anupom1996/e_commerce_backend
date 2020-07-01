@@ -1,5 +1,6 @@
 const express = require('express')
 const router = express.Router()
+const bcrypt=require('bcryptjs')
 const AdminCollection = require('../AdminSchema/adminschema')
 const schemaValidation = require('../Validation/Adminvalidation')
 const auth = require('../../Middleware_project/auth')
@@ -13,12 +14,14 @@ router.post('/adminRegistration', async (req, res) => {
         await adminReqbody.save()
 
         res.status(200).send({
+            status:"success",
             message: "You Are Successfully Registered",
             adminReqbody
         })
 
     } catch (e) {
         res.status(500).send({
+            status:"failed",
             message: "Internal Server problem",
             e
         })
@@ -27,10 +30,31 @@ router.post('/adminRegistration', async (req, res) => {
 })
 router.post('/Adminlogin', async (req, res) => {
     try {
-       // console.log(req.body.AdminEmail,req.body.AdminPassword)
-        const user = await AdminCollection.findByCredentials(req.body.AdminEmail, req.body.AdminPassword)
+       console.log(req.body.AdminEmail,req.body.AdminPassword)
+       //const user = await AdminCollection.findByCredentials(req.body.AdminEmail, req.body.AdminPassword)
 //postman r jonno AdminEmail AdminPassword
 
+        
+        const user = await AdminCollection.findOne({ AdminEmail:req.body.AdminEmail })
+        
+        if (!user) {
+            
+            return res.status(400).send("Email do not Exist")
+            
+        }
+
+        const isMatch = await bcrypt.compare(req.body.AdminPassword, user.AdminPassword)
+
+        if (!isMatch) {
+            return res.status(400).send({
+                err:"Password do not Exist"})
+        }
+
+
+
+
+
+    
         const token = await user.generateAuthToken()
 
         res.send({ user, token })
@@ -38,7 +62,7 @@ router.post('/Adminlogin', async (req, res) => {
     } catch (e) {
 
         res.status(500).send(
-           // { message :"errore",e}
+           { message :"errore",e},
            console.log(e)
         )
     }

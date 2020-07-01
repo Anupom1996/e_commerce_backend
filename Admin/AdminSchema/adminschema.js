@@ -93,17 +93,21 @@ AdminSchema.pre('save',async function(callback)
 
 AdminSchema.statics.findByCredentials = async (email, password) => {
     const user = await AdminCollection.findOne({ AdminEmail:email })
-
+    var a =true;
     if (!user) {
-        throw new Error('Unable to login')
+        // throw new Error('Unable to login Email id is not match')
+        // res.status(400).send({
+        //     error:'Unable to login Email id is not match'})
+        return res.status(400).send("Email do not Exist")
+           
     }
 
     const isMatch = await bcrypt.compare(password, user.AdminPassword)
 
     if (!isMatch) {
-       throw new Error('Unable to login')
+       throw new Error('Unable to login password is not match')
     }
-
+    console.log("user")
     return user
 }
 AdminSchema.methods.generateAuthToken = async function () {
